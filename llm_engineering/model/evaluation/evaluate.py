@@ -30,7 +30,10 @@ def generate_answers(model_id: str, dataset_name: str):
 
     dataset = load_dataset(dataset_name, split="test")
     if IS_DUMMY:
-        dataset = dataset.select(range(10))
+        try:
+            dataset = dataset.select(range(10))
+        except Exception:
+            print("Dummy mode active. Failed to trim the dataset to 10 samples.")  # noqa
     print(f"Dataset size: {len(dataset)}")  # noqa
     dataset = dataset.map(lambda sample: {"prompt": format(sample)})
 
@@ -199,7 +202,7 @@ model_ids = [
     check_if_huggingface_model_exists(
         f"{MODEL_HUGGINGFACE_WORKSPACE}/TwinLlama-3.1-8B-DPO", default_value="mlabonne/TwinLlama-3.1-8B-DPO"
     ),
-    "meta-llama/Meta-Llama-3.1-8B-Instruct",
+    "meta-llama/Llama-3.1-8B-Instruct",
 ]
 
 if __name__ == "__main__":

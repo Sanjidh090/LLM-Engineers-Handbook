@@ -102,7 +102,10 @@ def finetune(
         dataset2 = load_dataset("mlabonne/FineTome-Alpaca-100k", split="train[:10000]")
         dataset = concatenate_datasets([dataset1, dataset2])
         if is_dummy:
-            dataset = dataset.select(range(400))
+            try:
+                dataset = dataset.select(range(400))
+            except Exception:
+                print("Dummy mode active. Failed to trim the dataset to 400 samples.")  # noqa
         print(f"Loaded dataset with {len(dataset)} samples.")  # noqa
 
         dataset = dataset.map(format_samples_sft, batched=True, remove_columns=dataset.column_names)
@@ -150,7 +153,10 @@ def finetune(
 
         dataset = load_dataset(f"{dataset_huggingface_workspace}/llmtwin-dpo", split="train")
         if is_dummy:
-            dataset = dataset.select(range(400))
+            try:
+                dataset = dataset.select(range(400))
+            except Exception:
+                print("Dummy mode active. Failed to trim the dataset to 400 samples.")  # noqa
         print(f"Loaded dataset with {len(dataset)} samples.")  # noqa
 
         dataset = dataset.map(format_samples_dpo)
@@ -268,7 +274,7 @@ if __name__ == "__main__":
 
     if args.finetuning_type == "sft":
         print("Starting SFT training...")  # noqa
-        base_model_name = "meta-llama/Meta-Llama-3.1-8B"
+        base_model_name = "meta-llama/Llama-3.1-8B"
         print(f"Training from base model '{base_model_name}'")  # noqa
 
         output_dir_sft = Path(args.model_dir) / "output_sft"
